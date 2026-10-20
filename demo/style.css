@@ -1,0 +1,92 @@
+/* Terne X as a parts catalogue's drawing: the model on the page, numbered; the parts list beside it, the key. */
+* { box-sizing: border-box; }
+html, body { margin: 0; background: #edefef; }
+body { font: 500 16px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; color: #16181b; -webkit-font-smoothing: antialiased; }
+.xp { --ink: #16181b; --page: #edefef; --faint: rgb(22 24 27 / .62); --rule: rgb(22 24 27 / .14); --pad: clamp(20px, 3.4vw, 48px);
+  --mono: ui-monospace, "SF Mono", Menlo, monospace; --row: clamp(20px, 2.75svh, 26px); position: relative; }
+.xp-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* the run: the stage holds while three screens of scroll take the drone apart */
+.xp-run { position: relative; height: 400svh; }
+.xp-stage { position: sticky; top: 0; height: 100svh; min-height: 560px; overflow: hidden; }
+.xp-canvas, .xp-callouts, .xp-poster { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.xp-canvas { opacity: 0; transition: opacity .6s; touch-action: pan-y; }
+.xp[data-gl="on"] .xp-canvas { opacity: 1; }
+.xp-callouts { pointer-events: none; overflow: visible; }
+.xp-poster { display: none; object-fit: cover; pointer-events: none; }
+.xp[data-gl="off"] .xp-poster { display: block; }
+.xp[data-gl="off"] .xp-canvas, .xp[data-gl="off"] .xp-callouts, .xp[data-gl="off"] .xp-bar { display: none; }
+.xp[data-gl="off"] .xp-run { height: auto; }
+
+/* loading: a hairline drawn across the page as the model comes in */
+.xp-load { position: absolute; left: 50%; top: 50%; width: min(360px, 50vw); height: 1px; margin-left: min(-180px, -25vw); background: var(--rule); transition: opacity .4s; pointer-events: none; }
+.xp-load i { position: absolute; inset: 0; background: var(--ink); transform: scaleX(0); transform-origin: 0 50%; transition: transform .2s; }
+.xp:not([data-gl="loading"]) .xp-load { opacity: 0; }
+
+/* the numbers on the drawing */
+.xp-callout line { stroke: var(--ink); stroke-width: 1; }
+.xp-callout-dot { fill: var(--ink); }
+.xp-callout-ring { fill: var(--page); stroke: var(--ink); stroke-width: 1; }
+.xp-callout text { font: 500 10px/1 var(--mono); fill: var(--ink); font-variant-numeric: tabular-nums; }
+.xp-callout[data-hot] .xp-callout-ring { fill: var(--ink); }
+.xp-callout[data-hot] text { fill: var(--page); }
+
+/* the type and the key, down the left */
+.xp-side { position: absolute; z-index: 3; left: var(--pad); top: max(40px, 8svh); bottom: max(28px, 4.5svh); width: 340px; display: flex; flex-direction: column; }
+.xp-head h1 { margin: 0; font-size: clamp(22px, 2.2vw, 30px); font-weight: 650; line-height: 1.05; letter-spacing: -.03em; }
+.xp-head p { margin: 14px 0 0; font-size: 15px; line-height: 1.45; letter-spacing: -.01em; text-wrap: pretty; }
+
+.xp-list { margin-top: clamp(18px, 3.5svh, 32px); width: 100%; border-collapse: collapse; font: 400 11px/1 var(--mono); letter-spacing: .02em; text-transform: uppercase; font-variant-numeric: tabular-nums; }
+.xp-list th, .xp-list td { height: var(--row); padding: 0 8px 0 0; text-align: left; font-weight: 400; white-space: nowrap; border-bottom: 1px solid var(--rule); }
+.xp-list thead th { height: auto; padding-bottom: 7px; font-size: 9.5px; letter-spacing: .08em; color: var(--faint); border-bottom-color: rgb(22 24 27 / .32); }
+.xp-list td:first-child { width: 36px; }
+.xp-list td:nth-child(3) { width: 34px; text-align: right; padding-right: 14px; }
+.xp-list td:last-child { padding-right: 0; color: var(--faint); }
+.xp-list tbody tr { position: relative; transition: background .15s; }
+.xp-whole th, .xp-whole td { color: var(--ink) !important; border-bottom-color: rgb(22 24 27 / .32); }
+.xp-list button { all: unset; cursor: pointer; }
+.xp-list button::after { content: ""; position: absolute; inset: 0; }
+.xp-list button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 2px; }
+.xp-list tr[data-hot] { background: rgb(22 24 27 / .055); }
+@media (hover: hover) { .xp-list tr[data-part]:has(button):hover { background: rgb(22 24 27 / .055); } }
+.xp-n { display: inline-grid; place-items: center; width: 21px; height: 21px; margin-left: -3px; border-radius: 50%; color: var(--faint); box-shadow: inset 0 0 0 1px transparent; transition: background .15s, color .15s, box-shadow .15s; }
+.xp-list tr[data-out] .xp-n { color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.xp-list tr[data-out="some"] .xp-n { box-shadow: inset 0 0 0 1px var(--ink), inset 0 0 0 2.5px var(--page), inset 0 0 0 3.5px var(--ink); }
+.xp-list tr[data-hot] .xp-n { background: var(--ink); color: var(--page); box-shadow: none; }
+/* the part the scroll is taking off now */
+.xp-list tr[aria-current] th { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+
+.xp-bar { margin-top: auto; display: flex; align-items: center; gap: 14px; }
+.xp-status { margin: 0; min-width: 9em; font: 400 10px/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.xp-button { padding: 9px 13px 8px; border: 0; border-radius: 999px; background: rgb(22 24 27 / .07); color: var(--ink); font: 400 10px/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; cursor: pointer; transition: background .2s, color .2s; white-space: nowrap; touch-action: manipulation; }
+.xp-button[aria-pressed="true"] { background: var(--ink); color: var(--page); }
+.xp-button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+@media (hover: hover) { .xp-button:not([aria-pressed="true"]):hover { background: rgb(22 24 27 / .13); } }
+
+.xp-now { display: none; }
+.xp-qty { color: var(--faint); }
+.xp[data-gl="off"] .xp-now { display: none !important; }
+.xp-drop { position: absolute; inset: 16px; z-index: 5; margin: 0; display: grid; place-items: center; border: 1px dashed var(--ink); border-radius: 6px; background: rgb(237 239 239 / .8); font: 400 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.xp-drop[hidden] { display: none; }
+.xp-foot { margin: 0; padding: 22px var(--pad) 32px; font-size: 13px; color: var(--faint); }
+.xp-foot a { color: var(--ink); text-underline-offset: .2em; }
+
+@media (max-width: 700px) {
+  .xp-side { position: static; width: auto; display: contents; }
+  .xp-head { position: absolute; z-index: 3; left: 20px; right: 20px; top: 28px; opacity: calc(1 - var(--apart, 0) * 8); }
+  .xp-head p { font-size: 14.5px; margin-top: 10px; }
+  .xp-bar { position: absolute; z-index: 3; left: 20px; right: 20px; bottom: max(20px, env(safe-area-inset-bottom)); justify-content: space-between; }
+  .xp-now { position: absolute; z-index: 3; left: 20px; right: 20px; bottom: calc(max(20px, env(safe-area-inset-bottom)) + 50px); margin: 0; display: flex; align-items: center; gap: 10px;
+    padding-top: 9px; border-top: 1px solid var(--rule); font: 400 11px/1 var(--mono); letter-spacing: .02em; text-transform: uppercase; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .xp-now span:last-child { margin-left: auto; color: var(--faint); }
+  .xp-now[data-out] .xp-n { color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+  .xp-now[data-out="some"] .xp-n { box-shadow: inset 0 0 0 1px var(--ink), inset 0 0 0 2.5px var(--page), inset 0 0 0 3.5px var(--ink); }
+  .xp-after { padding: 8px 20px 0; }
+  .xp-list { margin-top: 0; }
+  .xp-list td:last-child { font-size: 10.5px; }
+  .xp-foot { padding: 22px 20px 32px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xp-canvas, .xp-load i, .xp-button, .xp-n { transition: none; }
+}

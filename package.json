@@ -1,0 +1,26 @@
+{
+  "name": "exploded",
+  "version": "1.0.0",
+  "description": "A drone that comes apart in your hands: each part on its own rail, numbered and measured, drawn round in ink; it flies only when whole. Drop in any GLB. three.js.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Oliver Kure Olsen (https://work.draindk.tech)",
+  "repository": "github:Ollibolli8/exploded",
+  "keywords": ["exploded-view", "teardown", "webgl", "threejs", "gltf", "product", "drone", "parts-catalogue", "technical-drawing"],
+  "main": "src/core.ts",
+  "files": ["src"],
+  "scripts": {
+    "build": "esbuild demo/main.ts --bundle --minify --format=esm --target=es2022 --outdir=docs && cp demo/index.html demo/public/* docs/ && mkdir -p docs/draco && cp node_modules/three/examples/jsm/libs/draco/gltf/draco_decoder.wasm node_modules/three/examples/jsm/libs/draco/gltf/draco_wasm_wrapper.js docs/draco/",
+    "dev": "npm run build && npx --yes serve docs",
+    "check": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "three": ">=0.180.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.185.4",
+    "esbuild": "^0.28.2",
+    "three": "^0.186.0",
+    "typescript": "^5.9.0"
+  }
+}

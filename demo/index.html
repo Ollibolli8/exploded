@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Exploded · a drone that comes apart in your hands</title>
+  <meta name="description" content="Thirty parts of the Terne X drone, numbered in the order they come off and measured from the model. Pull any part out; it flies only when every one is back. three.js.">
+  <meta name="theme-color" content="#edefef">
+  <meta property="og:title" content="Exploded">
+  <meta property="og:description" content="Thirty parts of the Terne X drone, numbered in the order they come off. Pull any part out; it flies only when every one is back.">
+  <meta property="og:image" content="https://ollibolli8.github.io/exploded/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="stylesheet" href="main.css">
+</head>
+<body>
+  <main class="xp" data-gl="loading">
+    <div class="xp-run">
+      <div class="xp-stage">
+        <canvas class="xp-canvas" aria-hidden="true"></canvas>
+        <svg class="xp-callouts" aria-hidden="true"></svg>
+        <picture>
+          <source media="(max-aspect-ratio: 10/11)" srcset="poster-tall.webp">
+          <img class="xp-poster" src="poster.webp" loading="lazy" alt="The Terne X camera drone taken apart, its parts numbered.">
+        </picture>
+        <div class="xp-load" aria-hidden="true"><i></i></div>
+        <div class="xp-side">
+          <header class="xp-head">
+            <h1>Exploded</h1>
+            <p>Thirty parts of Terne X, numbered in the order they come off its airframe and measured from the model. Pull any part out. It flies only when every one is back.</p>
+          </header>
+          <table class="xp-list">
+            <caption class="xp-sr">Parts</caption>
+            <thead><tr><th scope="col">Item</th><th scope="col">Part</th><th scope="col">Qty</th><th scope="col">Size, mm</th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <div class="xp-bar">
+            <p class="xp-status" role="status"></p>
+            <button type="button" class="xp-button" aria-pressed="false">Sound off</button>
+          </div>
+        </div>
+        <p class="xp-now" aria-hidden="true"></p>
+        <p class="xp-drop" hidden>Drop a .glb</p>
+      </div>
+    </div>
+    <p class="xp-foot"><a href="https://github.com/Ollibolli8/exploded">Source</a> · Drop in a .glb of your own · <a href="https://work.draindk.tech/lab/exploded/">Oliver Kure Olsen</a></p>
+  </main>
+  <script type="module" src="main.js"></script>
+</body>
+</html>
