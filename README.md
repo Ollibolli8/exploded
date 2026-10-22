@@ -24,8 +24,9 @@ minified on top of three.js. Drop any `.glb` on the demo and it comes apart by i
 - **Hands:** a mouse hovers (a GPU pick: each mesh has a stand-in drawn in an id colour into a one-pixel target, read
   back without stalling), drags a part along its rail's line on the screen (detents at both ends) or clicks it out and
   back. A finger taps a part out or back, drags sideways to turn the drone, and an up or down drag scrolls the page.
-- **Ink** (`src/outline.ts`): the part under the pointer is drawn round. Its stand-ins go into a half-resolution mask
-  twice, depth-tested against the rest and not, and one pass draws the outside edge: solid where it shows, dashed
+- **Ink** (`src/outline.ts`): the part under the pointer is drawn round. Its stand-ins go into a mask at the canvas's
+  own pixels, multisampled as the drawing is and only over the box the part fills, twice, depth-tested against the
+  rest and not, and one pass draws the edge as a pen would, half outside and half in: solid where it shows, dashed
   where it runs on behind other parts.
 - **Numbers** (`src/callouts.ts`): every part that is out carries its number on a leader, out from the middle of the
   drawing, turned off that line or further out if that covers fewer parts, then pushed clear of the other numbers.
