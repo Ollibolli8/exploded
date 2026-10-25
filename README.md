@@ -72,7 +72,14 @@ both, so no material is built again once it is live.
 npm install
 npm run build   # docs/ (GitHub Pages)
 npm run dev     # build and serve
+npm run check   # types
+npm test        # the spec against the model (Node 22.18 or later)
 ```
+
+The tests read `terne.glb`'s node tree and check the spec against it: every node it names is in the model, a node
+rests only on one with the same parent and along the same rail (or core.ts would quietly skip it), the steps run
+without a gap; and the parts module's measuring and naming. GitHub runs them on every push, with the types, the build
+and a check that `docs/` is the build of this source (`.github/workflows/check.yml`).
 
 ## Licence
 

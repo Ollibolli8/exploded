@@ -1,0 +1,26 @@
+# On every push and pull request: the types, the tests (the spec against the model, the parts module's sums) and the
+# build, then that the demo in docs/ (what GitHub Pages serves) is the build of this source, not an older one.
+name: check
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Types
+        run: npm run check
+      - name: Tests
+        run: npm test
+      - name: Build
+        run: npm run build
+      - name: The demo in docs/ is built from this source
+        run: git diff --stat --exit-code -- docs
