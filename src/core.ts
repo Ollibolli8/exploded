@@ -468,7 +468,7 @@ export function createExploded(o: ExplodedOptions): Exploded {
     hotPiece = piece;
     const part = piece?.part ?? null;
     if (part !== hotPart) { hotPart = part; o.onHot?.(part?.info.id ?? null); }
-    canvas.style.cursor = piece ? (piece.part.info.fixed ? "default" : "grab") : "";
+    canvas.style.cursor = piece ? (piece.part.info.fixed ? "var(--o-rest, default)" : "grab") : "";
     lit();
   }
   function lit() {
@@ -534,7 +534,7 @@ export function createExploded(o: ExplodedOptions): Exploded {
     if (!g || g.id !== e.pointerId) return;
     grab = null;
     if (canvas.hasPointerCapture(e.pointerId)) canvas.releasePointerCapture(e.pointerId);
-    canvas.style.cursor = hotPiece ? (hotPiece.part.info.fixed ? "default" : "grab") : "";
+    canvas.style.cursor = hotPiece ? (hotPiece.part.info.fixed ? "var(--o-rest, default)" : "grab") : "";
     const click = g.moved < 6 && performance.now() - g.t < 600;
     if (performance.now() - g.lt > 90) orbit.vy = orbit.vp = 0;     // held still before letting go: no throw
     if (g.kind === "piece" && g.piece) {
