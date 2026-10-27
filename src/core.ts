@@ -166,7 +166,7 @@ export function createExploded(o: ExplodedOptions): Exploded {
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(26, 1, 0.01, 30);
   camera.layers.enable(1);
-  let alive = true, ready = false, still = !!o.still, raf = 0, prev = 0, drawn = 0, pace = 1000 / 60;
+  let alive = true, ready = false, still = !!o.still, raf = 0, prev = 0, drawn = 0, pace = 1000 / 60, nextRatio = 0;
 
   // ------------------------------------------------------------------------------------------ light
   // What the metal reflects: the page's (o.environment), or the softbox room here without one or if it fails. The
@@ -594,6 +594,9 @@ export function createExploded(o: ExplodedOptions): Exploded {
     const dt = prev ? Math.min(0.05, (now - prev) / 1000) : 1 / 60;
     prev = now;
     if (!ready || holding) return;
+    // a new pixel ratio is set here, before the frame is drawn: it clears the canvas, and set after a draw (by the page's
+    // frame guard, from onFrame) that frame showed blank
+    if (nextRatio) { renderer.setPixelRatio(nextRatio); nextRatio = 0; resize(); }
     clock += dt;
     let moving = false;
 
@@ -658,8 +661,9 @@ export function createExploded(o: ExplodedOptions): Exploded {
     o.onFrame?.(now, pace);
     drawn = now;
     // keep going while anything moves; the lights alone blink at 30 frames a second
-    if (moving || grab) { pace = 1000 / 60; raf = requestAnimationFrame(draw); }
-    else if (s.power && lights?.count && !still) { pace = 1000 / 30; raf = requestAnimationFrame(draw); }
+    // (a kick from onFrame may have asked for the next frame already: one is enough)
+    if (moving || grab) { pace = 1000 / 60; raf ||= requestAnimationFrame(draw); }
+    else if (s.power && lights?.count && !still) { pace = 1000 / 30; raf ||= requestAnimationFrame(draw); }
   }
 
   /** Each part's number: beside what it points at, out from the middle of the model, clear of the others. */
@@ -773,7 +777,7 @@ export function createExploded(o: ExplodedOptions): Exploded {
     },
     hot(id) { listHot = parts.find(p => p.info.id === id) ?? null; lit(); },
     setStill(on) { still = on; prev = 0; status(true); kick(); },
-    setPixelRatio(dpr) { renderer.setPixelRatio(dpr); resize(); kick(); },
+    setPixelRatio(dpr) { nextRatio = dpr; kick(); },
     refit() { resize(); kick(); },
     dispose() {
       alive = false;
